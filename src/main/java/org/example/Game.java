@@ -1,7 +1,6 @@
 package org.example;
 
 import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
@@ -13,22 +12,24 @@ import java.io.IOException;
 
 public class Game {
     private final TerminalScreen screen;
-    private Hero hero;
+    private Arena arena;
 
-    public Game(int  width, int height) throws IOException {
-        hero = new Hero(10, 10);
+
+    public Game(int width, int height) throws IOException {
 
         Terminal terminal = new DefaultTerminalFactory().setInitialTerminalSize(new TerminalSize(width, height)).createTerminal();
         screen = new TerminalScreen(terminal);
-        screen.setCursorPosition(null);   // we don't need a cursor
-        screen.startScreen();             // screens must be started
-        screen.doResizeIfNecessary();     // resize screen if necessary
+        screen.setCursorPosition(null);
+        screen.startScreen();
+        screen.doResizeIfNecessary();
     }
+
     private void draw() throws IOException {
         screen.clear();
-        hero.draw(screen);
+        arena.draw(screen);
         screen.refresh();
     }
+
     public void run() throws IOException {
         while (true) {
             draw();
@@ -41,21 +42,6 @@ public class Game {
         }
     }
     private void processKey(KeyStroke key) {
-        System.out.println(key);
-        String keyT = key.getKeyType().toString();
-        switch (keyT) {
-            case "ArrowUp":
-                hero.moveUp();
-                break;
-            case "ArrowDown":
-                hero.moveDown();
-                break;
-            case "ArrowLeft":
-                hero.moveLeft();
-                break;
-            case "ArrowRight":
-                hero.moveRight();
-                break;
-        }
+        arena.processKey(key);
     }
 }
