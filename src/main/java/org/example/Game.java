@@ -1,6 +1,9 @@
 package org.example;
 
+import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
@@ -16,7 +19,7 @@ public class Game {
 
 
     public Game(int width, int height) throws IOException {
-
+        arena = new Arena (width, height); //inicializar a arena
         Terminal terminal = new DefaultTerminalFactory().setInitialTerminalSize(new TerminalSize(width, height)).createTerminal();
         screen = new TerminalScreen(terminal);
         screen.setCursorPosition(null);
@@ -26,7 +29,9 @@ public class Game {
 
     private void draw() throws IOException {
         screen.clear();
-        arena.draw(screen);
+        TextGraphics graphics = screen.newTextGraphics();
+
+        arena.draw(graphics);
         screen.refresh();
     }
 
