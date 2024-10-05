@@ -38,15 +38,20 @@ public class Game {
     public void run() throws IOException {
         while (true) {
             draw();
+            arena.moveMonsters();
             KeyStroke key = screen.readInput();
             if (key.getKeyType() == KeyType.Character && key.getCharacter() == 'q')
-                screen.close();
+                break;
             if (key.getKeyType() == KeyType.EOF)
                 break;
             processKey(key);
         }
+        screen.close();
     }
     private void processKey(KeyStroke key) {
         arena.processKey(key);
+        arena.moveMonsters();
+        arena.verifyMonsterCollisions();
+        arena.checkCoinCollisions();
     }
 }

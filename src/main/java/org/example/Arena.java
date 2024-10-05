@@ -19,17 +19,25 @@ public class Arena {
     private List<Wall> walls;
     private List<Coin> coins;
     private Random random;
+    private List<Monster> monsters; // Lista de monstros
 
     public Arena(int width, int height) {
         this.width = width;
         this.height = height;
         this.hero = new Hero(10, 10);
         this.walls = createWalls(); // Inicializa as paredes
-        this.coins = createCoins(); // Initializa as coins
+        this.coins = createCoins(); // Inicializa as coins
         this.random = new Random();
+        this.monsters = createMonsters(); // Inicializa a lista de monstros
     }
-
-    private List<Wall> createWalls() {
+    //Criar monstros
+    private List<Monster> createMonsters() {
+        List<Monster> monsters = new ArrayList<>();
+        monsters.add(new Monster(5, 5));
+        monsters.add(new Monster(8, 8));
+        return monsters;
+    }
+        private List<Wall> createWalls() {
         List<Wall> walls = new ArrayList<>();
 
         for (int c = 0; c < width; c++) {
@@ -77,19 +85,47 @@ public class Arena {
     }
 
     public void draw(TextGraphics graphics) throws IOException {
-        // Cor para a arena
-        graphics.setBackgroundColor(TextColor.Factory.fromString("#336699")); // Cor
+        graphics.setBackgroundColor(TextColor.Factory.fromString("#336699"));
         graphics.fillRectangle(new TerminalPosition(0, 0), new TerminalSize(width, height), ' ');
+
         for (Wall wall : walls) {
             wall.draw(graphics);
         }
         for (Coin coin : coins) {
             coin.draw(graphics);
         }
-
         hero.draw(graphics);
-    }
 
+        // Draw monsters
+        for (Monster monster : monsters) {
+            monster.draw(graphics);
+        }
+    }
+    public void moveMonsters() {
+        for (Monster monster : monsters) {
+            Position newPosition = monster.move();
+            if (canMonsterMove(newPosition)) {
+                monster.setPosition(newPosition);
+            }
+        }
+    }
+    public void verifyMonsterCollisions() {
+        for (Monster monster : monsters) {
+            if (monster.getPosition().equals(hero.getPosition())) {
+                System.out.println("Game Over! You were caught by a monster!");
+                System.exit(0); // Terminate the game
+            }
+        }
+    }
+    private boolean canMonsterMove(Position position) {
+        for (Wall wall : walls) {
+            if (wall.getPosition().equals(position)) {
+                return false; // Cannot move into the wall
+            }
+        }
+        return position.getX() >= 0 && position.getX() < width &&
+                position.getY() >= 0 && position.getY() < height;
+    }
     private boolean canHeroMove(Position position) {
         // Verificar se está a esbarrar na arena
         for (Wall wall : walls) {
@@ -102,7 +138,10 @@ public class Arena {
                 position.getY() >= 0 && position.getY() < height;
     }
     private void retrieveCoins() {
-        // Verifica se chegou na moeda
         coins.removeIf(coin -> coin.getPosition().equals(hero.getPosition()));
     }
+    public void checkCoinCollisions() {
+        coins.removeIf(coin -> coin.getPosition().equals(hero.getPosition()));
+    }
+
 }
